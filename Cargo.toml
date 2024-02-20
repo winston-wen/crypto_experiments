@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = [
+    "shamir_secret_sharing",
+]
+
+[workspace.dependencies]
+rand = "0.8"
+num-bigint = { version = "0.4", features = ["rand"] }
+num-traits = "0.2"
