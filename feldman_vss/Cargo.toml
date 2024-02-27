@@ -1,11 +1,15 @@
 [package]
-name = "modulo_arithmetic"
+name = "feldman_vss"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hex = { workspace = true }
+k256 = { workspace = true }
+rand = { workspace = true }
 num-bigint = { workspace = true }
 num-traits = { workspace = true }
+
+# ==== DIY crates below =====
+modulo_arithmetic = { workspace = true }

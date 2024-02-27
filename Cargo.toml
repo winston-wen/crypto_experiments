@@ -1,12 +1,15 @@
 [workspace]
 resolver = "2"
-members = [
-    "shamir_secret_sharing",
-    "modulo_arithmetic",
-]
+members = ["shamir_secret_sharing", "modulo_arithmetic", "feldman_vss"]
 
 [workspace.dependencies]
-rand = "0.8"
+k256 = { version = "0.13" }
+hex = "*"
 num-bigint = { version = "0.4", features = ["rand"] }
 num-traits = "0.2"
+rand = "0.8"
+
 modulo_arithmetic = { path = "./modulo_arithmetic" }
+
+[patch.crates-io]
+k256 = { path = "patches/k256-0.13.3" }
