@@ -62,6 +62,9 @@ pub fn algo_extended_euclidean(a: &BigInt, b: &BigInt) -> ExtendedEuclideanResul
 }
 
 pub fn moddiv(a: &BigInt, b: &BigInt, p: &BigInt) -> BigInt {
+    let one = const_1();
+    assert!(p > &one);
+
     let obj_ab = algo_extended_euclidean(a, b);
     let a = obj_ab.reduced_a;
     let b = obj_ab.reduced_b;
@@ -75,11 +78,15 @@ pub fn moddiv(a: &BigInt, b: &BigInt, p: &BigInt) -> BigInt {
 }
 
 pub fn modinv(a: &BigInt, p: &BigInt) -> BigInt {
-    assert!(false == p.is_zero());
+    let one = const_1();
+    assert!(p > &one);
+
     let obj = algo_extended_euclidean(a, p);
-    assert!(obj.gcd.is_one());
+    assert!(obj.gcd.is_one(), "a has no multiplicative inverse mod p");
     obj.bezout_x.rem_euclid(p)
 }
+
+use crate::prelude::*;
 
 #[cfg(test)] // cargo test -- --show-output
 mod tests {
@@ -120,7 +127,4 @@ mod tests {
     }
 
     use super::*;
-    use crate::prelude::*;
 }
-
-use crate::prelude::*;

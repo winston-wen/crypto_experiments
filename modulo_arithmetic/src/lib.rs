@@ -1,5 +1,7 @@
 mod extended_euclidean;
 pub use extended_euclidean::*;
+mod modpow;
+pub use modpow::*;
 
 pub mod prelude {
     pub fn const_0() -> BigInt {
