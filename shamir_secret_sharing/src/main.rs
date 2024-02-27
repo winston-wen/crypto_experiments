@@ -1,5 +1,5 @@
 fn main() {
-    let p = BigInt::from(2).pow(127) - num1(); // 12th Mersenne Prime. 2^127 - 1.
+    let p = pow(BigInt::from(2), 127) - const_1(); // 12th Mersenne Prime. 2^127 - 1.
     let s = BigInt::from(1145141919810893i64);
     let k: usize = 3;
     let n: usize = 5;
@@ -7,17 +7,14 @@ fn main() {
 
     let view = [&shares[0], &shares[1], &shares[2]];
     let es = lagrange_interpolate(&view, &p);
-    println!("es == {}", es);
     assert_eq!(es, s);
 
     let view = [&shares[0], &shares[1], &shares[2], &shares[3]];
     let es = lagrange_interpolate(&view, &p);
-    println!("es == {}", es);
     assert_eq!(es, s);
 
     let view = [&shares[0], &shares[1], &shares[2], &shares[3], &shares[4]];
     let es = lagrange_interpolate(&view, &p);
-    println!("es == {}", es);
     assert_eq!(es, s);
 }
 
@@ -37,11 +34,11 @@ pub fn share_secret(
     p: &BigInt,
 ) -> Vec<Share> {
     assert!(k <= n);
-    assert!(*p > num0());
+    assert!(*p > const_0());
     let mut coefs: Vec<BigInt> = vec![s.clone()];
     let mut rng = rand::thread_rng();
     for _ in 1..k {
-        let coef = rng.gen_bigint_range(&num1(), &p);
+        let coef = rng.gen_bigint_range(&const_1(), &p);
         coefs.push(coef);
     }
     let mut shares: Vec<Share> = Vec::new();
@@ -70,17 +67,17 @@ pub fn lagrange_interpolate(shares: &[&Share], p: &BigInt) -> BigInt {
             .collect();
         assert_eq!(shares.len(), shares_set.len());
     }
-    let mut sum: BigInt = num0();
+    let mut sum: BigInt = const_0();
     for (i, share) in shares.iter().enumerate() {
         let x_i = BigInt::from(share.id);
         let y_i = &share.val;
-        let mut prod_i: BigInt = num1();
+        let mut prod_i: BigInt = const_1();
         for (j, other_share) in shares.iter().enumerate() {
             if i == j {
                 continue;
             }
             let x_j = BigInt::from(other_share.id);
-            let frac = divmod(&x_j, &(&x_j - &x_i), p);
+            let frac = moddiv(&x_j, &(&x_j - &x_i), p);
             prod_i = (prod_i * frac).rem_euclid(p);
         }
         let sum_i = (y_i * prod_i).rem_euclid(p);
@@ -89,9 +86,19 @@ pub fn lagrange_interpolate(shares: &[&Share], p: &BigInt) -> BigInt {
     sum
 }
 
-mod modulo_arithmetic;
+
+/// Evaluate the polynomial `f(x)`, using Qin Jiushao (秦久韶) / Horner's method.
+/// Note that `coefs` is ordered by ascending power of `x`.
+pub fn eval_polynomial(coefs: &[BigInt], x: &BigInt, p: &BigInt) -> BigInt {
+    let mut y: BigInt = const_0();
+    for coef in coefs.iter().rev() {
+        y = (y * x + coef).rem_euclid(p);
+    }
+    y
+}
 
 use modulo_arithmetic::*;
+use modulo_arithmetic::prelude::*;
 use num_bigint::{BigInt, RandBigInt};
-use num_traits::Euclid;
+use num_traits::{*, pow};
 use std::collections::HashSet;

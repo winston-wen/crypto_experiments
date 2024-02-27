@@ -2,9 +2,11 @@
 resolver = "2"
 members = [
     "shamir_secret_sharing",
+    "modulo_arithmetic",
 ]
 
 [workspace.dependencies]
 rand = "0.8"
 num-bigint = { version = "0.4", features = ["rand"] }
 num-traits = "0.2"
+modulo_arithmetic = { path = "./modulo_arithmetic" }

@@ -32,6 +32,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c198f91728a82281a64e1f4f9eeb25d82cb32a5de251c6bd1b5154d63a8e7bd"
 
 [[package]]
+name = "modulo_arithmetic"
+version = "0.1.0"
+dependencies = [
+ "num-bigint",
+ "num-traits",
+]
+
+[[package]]
 name = "num-bigint"
 version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -101,6 +109,7 @@ dependencies = [
 name = "shamir_secret_sharing"
 version = "0.1.0"
 dependencies = [
+ "modulo_arithmetic",
  "num-bigint",
  "num-traits",
  "rand",
