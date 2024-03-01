@@ -1,3 +1,5 @@
+//! Interop between k256::Scalar and num_bigint::BigInt.
+
 pub trait ScalarToBigInt {
     fn to_bigint(&self) -> BigInt;
 }
@@ -12,12 +14,28 @@ pub trait BigIntToScalar {
 }
 impl BigIntToScalar for BigInt {
     fn to_scalar(&self) -> Scalar {
+        // Notes on Endianness
+        // Big Endian: power is ordered by descending array index
+        // Little Endian: power is ordered by ascending array index
+        // e.g. 0x123456 as u32
+        // Big Endian:    [0x00, 0x12, 0x34, 0x56],
+        //   which is interpreted as coeffients of [256^3, 256^2, 256^1, 256^0].
+        // Little Endian: [0x56, 0x34, 0x12, 0x00],
+        //   which is interpreted as coefficients of [256^0, 256^1, 256^2, 256^3].
+
         let n = const_secp256k1_order();
         let a = self.rem_euclid(&n);
-        let bvec = a.to_bytes_be().1;
-        let mut bytes: [u8; 32] = <[u8; 32]>::default();
-        bytes.copy_from_slice(&bvec);
-        Scalar::from_bytes_unchecked(&bytes)
+        let src_buf = a.to_bytes_be().1;
+        let dst_buf: [u8; 32];
+        if src_buf.len() > 32 {
+            let src_buf_truncated = &src_buf[src_buf.len() - 32..];
+            dst_buf = src_buf_truncated.try_into().unwrap();
+        } else {
+            let pad = vec![0u8; 32 - src_buf.len()];
+            let src_buf_padded = [pad, src_buf].concat();
+            dst_buf = src_buf_padded.try_into().unwrap();
+        }
+        Scalar::from_bytes_unchecked(&dst_buf)
     }
 }
 

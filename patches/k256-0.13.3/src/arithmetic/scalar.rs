@@ -73,7 +73,7 @@ const FRAC_MODULUS_2: U256 = ORDER.shr_vartime(1);
 /// The serialization is a fixed-width big endian encoding. When used with
 /// textual formats, the binary data is encoded as hexadecimal.
 #[derive(Clone, Copy, Debug, Default, PartialOrd, Ord)]
-pub struct Scalar(pub(crate) U256);
+pub struct Scalar(pub U256);
 
 impl Scalar {
     /// Zero scalar.
