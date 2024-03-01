@@ -2,6 +2,8 @@ mod util;
 use num_traits::Euclid;
 pub use util::*;
 use util::{hash::DiyHash, interop::BigIntToScalar};
+mod keystore;
+pub use keystore::*;
 
 #[derive(Clone, Debug, Deref, DerefMut, Deserialize, Serialize)]
 pub struct VssCommitment(Vec<AffinePoint>);

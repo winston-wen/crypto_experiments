@@ -1,3 +1,7 @@
+//! A simple in-memory key-value pool.
+
+/// `Box<dyn Any + Send + Sync>` is used to store any type of object, \
+/// thus eliminate the need of de/serialization.
 static mut DB: OnceLock<DashMap<String, Box<dyn Any + Send + Sync>>> = OnceLock::new();
 
 pub async fn send<T>(topic: &str, src: usize, dst: usize, obj: &T)
