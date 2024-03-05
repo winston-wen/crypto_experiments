@@ -25,16 +25,11 @@ impl VssCommitment {
         id: usize,        // participant id
         polyval: &BigInt, // value of polynomial computed at and received from `id`
     ) -> (String, String) {
-        let x = BigInt::from(id);
-        let mut xpow = const_1();
-        let order = const_secp256k1_order();
+        let x = BigInt::from(id).to_scalar();
 
         let mut poly_com = ProjectivePoint::IDENTITY;
-        for coef_com in self.iter() {
-            let xpow_scalar = xpow.to_scalar();
-            let term_com = *coef_com * &xpow_scalar;
-            poly_com += term_com;
-            xpow = (xpow * &x).rem_euclid(&order);
+        for coef_com in self.iter().rev() {
+            poly_com = (poly_com * &x) + coef_com;
         }
 
         let polyval_com = ProjectivePoint::GENERATOR * &polyval.to_scalar();
