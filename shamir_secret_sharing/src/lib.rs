@@ -51,16 +51,16 @@ pub fn lagrange_interpolate(shares: &[&ShamirShare], p: &BigInt) -> BigInt {
     for (i, share) in shares.iter().enumerate() {
         let x_i = BigInt::from(share.id);
         let y_i = &share.val;
-        let mut prod_i: BigInt = const_1();
+        let mut λ_i: BigInt = const_1();
         for (j, other_share) in shares.iter().enumerate() {
             if i == j {
                 continue;
             }
             let x_j = BigInt::from(other_share.id);
             let frac = moddiv(&x_j, &(&x_j - &x_i), p);
-            prod_i = (prod_i * frac).rem_euclid(p);
+            λ_i = (λ_i * frac).rem_euclid(p);
         }
-        let sum_i = (y_i * prod_i).rem_euclid(p);
+        let sum_i = (y_i * λ_i).rem_euclid(p);
         sum = (sum + sum_i).rem_euclid(p);
     }
     sum
